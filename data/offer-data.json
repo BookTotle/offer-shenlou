@@ -2,21 +2,5 @@
   "internship": [],
   "autumn": [],
   "spring": [],
-  "fulltime": [
-    {
-      "id": 1774102612158,
-      "companyName": "发的个人",
-      "jobPosition": "热特尔",
-      "progressStatus": "待投递",
-      "nextAction": "",
-      "deadline": "",
-      "location": "",
-      "priority": "普通",
-      "channel": "官网",
-      "relatedLink": "",
-      "jobAnnouncementLink": "",
-      "notes": "",
-      "modifyTime": "2026-03-21T14:16:51.395Z"
-    }
-  ]
+  "fulltime": []
 }
