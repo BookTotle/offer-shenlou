@@ -236,6 +236,22 @@
       padding: 8px 10px;
     }
 
+
+    .sync-status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 72px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
     .btn, .ghost-btn, .outline-btn, .action-btn, .tab, .link-btn, .tag, .sort-select, .filter-input, .filter-select {
       transition: .2s ease;
     }
@@ -653,6 +669,23 @@
       .form-grid { grid-template-columns: 1fr; }
       .toolbar-right { border-radius: 20px; }
     }
+
+    .sync-status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 78px;
+      padding: 0 14px;
+      height: 46px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #f7f9fc;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
   </style>
 </head>
 <body>
@@ -708,6 +741,7 @@
         </div>
         <button class="ghost-btn" id="applyFilterBtn"><i class="fa-solid fa-magnifying-glass"></i> 筛选</button>
         <button class="ghost-btn" id="resetFilterBtn"><i class="fa-solid fa-rotate-left"></i> 重置</button>
+        <span class="sync-status" id="syncStatus">未同步</span>
       </div>
     </div>
 
@@ -816,6 +850,13 @@
 
   <script>
     const STORAGE_KEY = 'offerRecruitDataV4';
+    const REMOTE_API = 'https://offer-shenlou-sync.13293549699.workers.dev/';
+    const REMOTE_KEY_MAP = {
+      daily: 'internship',
+      summer: 'fulltime',
+      autumn: 'autumn',
+      spring: 'spring'
+    };
     const SEASONS = {
       daily: '日常实习',
       summer: '暑期实习',
@@ -950,28 +991,110 @@
       };
     }
 
-    function loadData() {
+    function getDefaultRemoteData() {
+      return {
+        internship: [],
+        autumn: [],
+        spring: [],
+        fulltime: []
+      };
+    }
+
+    function saveLocalSnapshot(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function loadLocalSnapshot() {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (!stored) {
-        state.data = createEmptyData();
-        persistAll();
-        return;
-      }
+      if (!stored) return createEmptyData();
       try {
         const parsed = JSON.parse(stored);
         const base = createEmptyData();
         Object.keys(base).forEach(key => {
           base[key] = Array.isArray(parsed[key]) ? parsed[key].map(normalizeRecord) : [];
         });
-        state.data = base;
+        return base;
       } catch {
-        state.data = createEmptyData();
-        persistAll();
+        return createEmptyData();
       }
     }
 
+    function toRemoteData(localData) {
+      const remote = getDefaultRemoteData();
+      Object.entries(REMOTE_KEY_MAP).forEach(([localKey, remoteKey]) => {
+        remote[remoteKey] = Array.isArray(localData[localKey]) ? localData[localKey].map(normalizeRecord) : [];
+      });
+      return remote;
+    }
+
+    function fromRemoteData(remoteData) {
+      const local = createEmptyData();
+      Object.entries(REMOTE_KEY_MAP).forEach(([localKey, remoteKey]) => {
+        local[localKey] = Array.isArray(remoteData?.[remoteKey]) ? remoteData[remoteKey].map(normalizeRecord) : [];
+      });
+      return local;
+    }
+
+    async function loadRemoteData() {
+      const res = await fetch(REMOTE_API, { method: 'GET' });
+      if (!res.ok) throw new Error('远程读取失败');
+      const result = await res.json();
+      if (!result.ok) throw new Error(result.error || '远程读取失败');
+      return fromRemoteData(result.data || getDefaultRemoteData());
+    }
+
+    async function saveRemoteData(localData) {
+      const payload = toRemoteData(localData);
+      const res = await fetch(REMOTE_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('远程保存失败');
+      const result = await res.json();
+      if (!result.ok) throw new Error(result.error || '远程保存失败');
+      return result;
+    }
+
+    let syncTimer = null;
+
+    function setSyncStatus(text) {
+      const el = document.getElementById('syncStatus');
+      if (el) el.textContent = text;
+    }
+
+    function scheduleRemoteSync() {
+      clearTimeout(syncTimer);
+      const snapshot = JSON.parse(JSON.stringify(state.data));
+      syncTimer = setTimeout(async () => {
+        try {
+          setSyncStatus('同步中');
+          await saveRemoteData(snapshot);
+          saveLocalSnapshot(snapshot);
+          setSyncStatus('已同步');
+        } catch (error) {
+          console.error('远程同步失败：', error);
+          setSyncStatus('同步失败');
+        }
+      }, 1500);
+    }
+
     function persistAll() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data));
+      saveLocalSnapshot(state.data);
+      setSyncStatus('未同步');
+      scheduleRemoteSync();
+    }
+
+    async function loadData() {
+      try {
+        state.data = await loadRemoteData();
+        saveLocalSnapshot(state.data);
+        setSyncStatus('已同步');
+      } catch (error) {
+        console.error('远程读取失败，已回退到本地：', error);
+        state.data = loadLocalSnapshot();
+        setSyncStatus('本地数据');
+      }
     }
 
     function getCurrentData() {
@@ -1553,9 +1676,14 @@
       tableBody.addEventListener('change', handleTableChange);
     }
 
-    function init() {
-      loadData();
+
+    window.addEventListener('beforeunload', () => {
+      saveLocalSnapshot(state.data);
+    });
+
+    async function init() {
       bindEvents();
+      await loadData();
       renderAll();
     }
 
