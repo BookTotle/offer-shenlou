@@ -2,5 +2,21 @@
   "internship": [],
   "autumn": [],
   "spring": [],
-  "fulltime": []
+  "fulltime": [
+    {
+      "id": 1774147403177,
+      "companyName": "蚂蚁集团",
+      "jobPosition": "用户运营",
+      "progressStatus": "已笔试",
+      "nextAction": "",
+      "deadline": "",
+      "location": "杭州",
+      "priority": "普通",
+      "channel": "官网",
+      "relatedLink": "",
+      "jobAnnouncementLink": "",
+      "notes": "",
+      "modifyTime": "2026-03-22T02:43:22.283Z"
+    }
+  ]
 }
