@@ -47,6 +47,21 @@
       "jobAnnouncementLink": "",
       "notes": "北森题库",
       "modifyTime": "2026-03-22T02:45:32.762Z"
+    },
+    {
+      "id": 1774147550545,
+      "companyName": "vivo",
+      "jobPosition": "产品营销经理",
+      "progressStatus": "已投递",
+      "nextAction": "发了笔试还没做",
+      "deadline": "",
+      "location": "杭州",
+      "priority": "普通",
+      "channel": "官网",
+      "relatedLink": "",
+      "jobAnnouncementLink": "",
+      "notes": "",
+      "modifyTime": "2026-03-22T02:45:49.930Z"
     }
   ]
 }
