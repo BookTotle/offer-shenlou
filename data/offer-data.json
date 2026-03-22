@@ -122,6 +122,21 @@
       "jobAnnouncementLink": "",
       "notes": "ai面试挂掉了",
       "modifyTime": "2026-03-22T02:47:24.761Z"
+    },
+    {
+      "id": 1774147663285,
+      "companyName": "拓竹",
+      "jobPosition": "渠道销售(零售运营方向)",
+      "progressStatus": "已投递",
+      "nextAction": "",
+      "deadline": "",
+      "location": "深圳",
+      "priority": "普通",
+      "channel": "官网",
+      "relatedLink": "",
+      "jobAnnouncementLink": "",
+      "notes": "",
+      "modifyTime": "2026-03-22T02:47:43.001Z"
     }
   ]
 }
