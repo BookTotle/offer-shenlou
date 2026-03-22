@@ -32,6 +32,21 @@
       "jobAnnouncementLink": "",
       "notes": "发了笔试链接没来得及做就被结束流程了",
       "modifyTime": "2026-03-22T02:44:00.257Z"
+    },
+    {
+      "id": 1774147533363,
+      "companyName": "vivo",
+      "jobPosition": "电商运营经理",
+      "progressStatus": "已投递",
+      "nextAction": "发了笔试还没做",
+      "deadline": "",
+      "location": "杭州",
+      "priority": "普通",
+      "channel": "官网",
+      "relatedLink": "",
+      "jobAnnouncementLink": "",
+      "notes": "北森题库",
+      "modifyTime": "2026-03-22T02:45:32.762Z"
     }
   ]
 }
