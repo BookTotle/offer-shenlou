@@ -62,6 +62,21 @@
       "jobAnnouncementLink": "",
       "notes": "",
       "modifyTime": "2026-03-22T02:45:49.930Z"
+    },
+    {
+      "id": 1774147576070,
+      "companyName": "美团",
+      "jobPosition": "大客户合作岗",
+      "progressStatus": "已投递",
+      "nextAction": "发了笔试还没做",
+      "deadline": "",
+      "location": "武汉/太原/北京",
+      "priority": "普通",
+      "channel": "官网",
+      "relatedLink": "",
+      "jobAnnouncementLink": "",
+      "notes": "",
+      "modifyTime": "2026-03-22T02:46:15.329Z"
     }
   ]
 }
